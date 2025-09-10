@@ -338,14 +338,14 @@ class MacedoSITester:
             print("\n--- Testing Fiscal User Permissions ---")
             
             # Should have access to fiscal
-            self.run_test("Fiscal Access to Fiscal Module", "GET", "/fiscal", 200, user_type="fiscal")
+            self.run_test("Fiscal Access to Fiscal Module", "GET", "/fiscal/", 200, user_type="fiscal")
             
             # Should NOT have access to financial
             self.run_test("Fiscal Denied Financial Access", "GET", "/financial/contas-receber", 
                          403, user_type="fiscal")
             
             # Should NOT have access to trabalhista
-            self.run_test("Fiscal Denied Trabalhista Access", "GET", "/trabalhista", 
+            self.run_test("Fiscal Denied Trabalhista Access", "GET", "/trabalhista/", 
                          403, user_type="fiscal")
 
         # Test colaborador permissions (should only access financeiro and contabil)
@@ -357,7 +357,7 @@ class MacedoSITester:
                          200, user_type="colaborador")
             
             # Should NOT have access to fiscal
-            self.run_test("Colaborador Denied Fiscal Access", "GET", "/fiscal", 
+            self.run_test("Colaborador Denied Fiscal Access", "GET", "/fiscal/", 
                          403, user_type="colaborador")
 
     def print_summary(self):

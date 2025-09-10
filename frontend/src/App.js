@@ -11,6 +11,7 @@ import Trabalhista from "./components/Trabalhista/Trabalhista";
 import Fiscal from "./components/Fiscal/Fiscal";
 import Atendimento from "./components/Atendimento/Atendimento";
 import Configuracoes from "./components/Configuracoes/Configuracoes";
+import Chat from "./components/Chat/Chat";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Layout from "./components/Layout/Layout";
 import { Toaster } from "sonner";

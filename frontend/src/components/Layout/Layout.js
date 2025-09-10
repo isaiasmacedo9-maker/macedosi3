@@ -74,6 +74,13 @@ const Layout = ({ children }) => {
       emoji: '📞'
     },
     {
+      name: 'Chat',
+      icon: MessageCircle,
+      path: '/chat',
+      access: [],
+      emoji: '💬'
+    },
+    {
       name: 'Configurações',
       icon: Settings,
       path: '/configuracoes',

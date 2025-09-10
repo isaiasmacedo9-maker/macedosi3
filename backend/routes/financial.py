@@ -37,7 +37,16 @@ async def create_conta_receber(
         total_liquido=total_liquido
     )
     
-    await contas_collection.insert_one(conta.model_dump())
+    # Convert to dict and ensure proper serialization
+    conta_dict = conta.model_dump()
+    
+    # Convert date objects to datetime for MongoDB compatibility
+    if isinstance(conta_dict.get('data_emissao'), date):
+        conta_dict['data_emissao'] = datetime.combine(conta_dict['data_emissao'], datetime.min.time())
+    if isinstance(conta_dict.get('data_vencimento'), date):
+        conta_dict['data_vencimento'] = datetime.combine(conta_dict['data_vencimento'], datetime.min.time())
+    
+    await contas_collection.insert_one(conta_dict)
     return conta
 
 @router.get("/contas-receber", response_model=List[ContaReceber])

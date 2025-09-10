@@ -18,7 +18,7 @@ class MacedoSITester:
         self.tests_passed = 0
         self.current_user = None
         
-        # Test credentials from init_database.py
+        # Test credentials from the request - updated with all test users
         self.test_users = {
             "admin": {
                 "email": "admin@macedo.com.br",
@@ -40,6 +40,28 @@ class MacedoSITester:
                 "expected_role": "colaborador",
                 "expected_cities": ["ourolandia"],
                 "expected_sectors": ["fiscal", "contabil"]
+            },
+            "ana_silva": {
+                "email": "ana.silva@macedo.com.br",
+                "password": "ana123456",
+                "expected_role": "colaborador",
+                "expected_cities": ["jacobina", "umburanas"],
+                "expected_sectors": ["contabil", "atendimento"]
+            },
+            "carlos_mendes": {
+                "email": "carlos.mendes@macedo.com.br",
+                "password": "carlos123",
+                "expected_role": "colaborador",
+                "expected_cities": ["ourolandia"],
+                "expected_sectors": ["trabalhista", "fiscal"],
+                "expected_active": False  # This user should be inactive
+            },
+            "admin2": {
+                "email": "admin2@macedo.com.br",
+                "password": "admin2456",
+                "expected_role": "admin",
+                "expected_cities": ["jacobina", "ourolandia", "umburanas", "uberlandia"],
+                "expected_sectors": ["comercial", "trabalhista", "fiscal", "financeiro", "contabil", "atendimento"]
             }
         }
 

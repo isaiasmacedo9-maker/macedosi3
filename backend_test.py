@@ -214,14 +214,14 @@ class MacedoSITester:
         # Test access control with colaborador user
         if 'colaborador' in self.tokens:
             print("\n--- Testing colaborador access control ---")
-            self.run_test("Colaborador Get Clients", "GET", "/clients", 200, user_type="colaborador")
+            self.run_test("Colaborador Get Clients", "GET", "/clients/", 200, user_type="colaborador")
             
             # Try to create client in unauthorized city
             unauthorized_client = new_client_data.copy()
             unauthorized_client["cidade"] = "ourolandia"  # colaborador only has access to jacobina
             unauthorized_client["cnpj"] = "88.888.888/0001-88"
             
-            self.run_test("Unauthorized City Access", "POST", "/clients", 403, 
+            self.run_test("Unauthorized City Access", "POST", "/clients/", 403, 
                          data=unauthorized_client, user_type="colaborador")
 
     def test_financial_module(self):

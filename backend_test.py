@@ -193,7 +193,7 @@ class MacedoSITester:
         }
         
         success, create_response = self.run_test(
-            "Create New Client", "POST", "/clients", 200, 
+            "Create New Client", "POST", "/clients/", 200, 
             data=new_client_data, user_type="admin"
         )
         

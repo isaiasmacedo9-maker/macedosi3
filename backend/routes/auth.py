@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, status, Depends
 from datetime import timedelta
-from models.user import UserLogin, UserResponse, User, UserCreate
+from models.user import UserLogin, UserResponse, User, UserCreate, UserUpdate
 from auth import authenticate_user, create_access_token, get_password_hash, get_current_user, get_admin_user, ACCESS_TOKEN_EXPIRE_MINUTES
 from database import get_users_collection
 from datetime import datetime
@@ -89,3 +89,43 @@ async def get_all_users():
     async for user_data in users_cursor:
         users.append(UserResponse(**user_data))
     return users
+
+@router.put("/users/{user_id}", dependencies=[Depends(get_admin_user)])
+async def update_user(user_id: str, user_update: UserUpdate):
+    """Update user (admin only)"""
+    users_collection = await get_users_collection()
+    
+    # Check if user exists
+    existing_user = await users_collection.find_one({"id": user_id})
+    if not existing_user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found"
+        )
+    
+    # Update fields
+    update_data = user_update.model_dump(exclude_unset=True)
+    if update_data:
+        update_data["updated_at"] = datetime.utcnow()
+        await users_collection.update_one(
+            {"id": user_id}, 
+            {"$set": update_data}
+        )
+    
+    # Return updated user
+    updated_user_data = await users_collection.find_one({"id": user_id})
+    return UserResponse(**updated_user_data)
+
+@router.get("/users/{user_id}", dependencies=[Depends(get_admin_user)])
+async def get_user(user_id: str):
+    """Get specific user (admin only)"""
+    users_collection = await get_users_collection()
+    user_data = await users_collection.find_one({"id": user_id})
+    
+    if not user_data:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found"
+        )
+    
+    return UserResponse(**user_data)

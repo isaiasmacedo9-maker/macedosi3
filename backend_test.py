@@ -152,7 +152,7 @@ class MacedoSITester:
 
         # Get existing clients
         success, clients_response = self.run_test(
-            "Get All Clients", "GET", "/clients", 200, user_type="admin"
+            "Get All Clients", "GET", "/clients/", 200, user_type="admin"
         )
         
         if success:

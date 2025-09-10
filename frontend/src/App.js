@@ -37,6 +37,7 @@ function App() {
                       <Route path="/trabalhista" element={<Trabalhista />} />
                       <Route path="/fiscal" element={<Fiscal />} />
                       <Route path="/atendimento" element={<Atendimento />} />
+                      <Route path="/chat" element={<Chat />} />
                       <Route path="/configuracoes" element={<Configuracoes />} />
                     </Routes>
                   </Layout>

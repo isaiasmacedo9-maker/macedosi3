@@ -348,6 +348,140 @@ class MacedoSITester:
         # Test configuracoes module
         print("\n--- Testing Configuracoes Module ---")
         self.run_test("Get Configuracoes", "GET", "/configuracoes/", 200, user_type="admin")
+        
+        # Test user management endpoints (admin only)
+        print("\n--- Testing User Management (Admin Only) ---")
+        self.run_test("Get All Users", "GET", "/auth/users", 200, user_type="admin")
+        
+        # Test creating new user via API
+        new_user_data = {
+            "email": "roberto.costa@macedo.com.br",
+            "name": "Roberto Costa",
+            "password": "roberto123",
+            "role": "colaborador",
+            "allowed_cities": ["jacobina", "uberlandia"],
+            "allowed_sectors": ["comercial", "financeiro"]
+        }
+        
+        success, create_user_response = self.run_test(
+            "Create New User", "POST", "/auth/register", 200, 
+            data=new_user_data, user_type="admin"
+        )
+        
+        created_user_id = None
+        if success and 'id' in create_user_response:
+            created_user_id = create_user_response['id']
+            print(f"✅ Created user with ID: {created_user_id}")
+            
+            # Test get specific user
+            self.run_test("Get User by ID", "GET", f"/auth/users/{created_user_id}", 
+                         200, user_type="admin")
+            
+            # Test update user
+            update_user_data = {
+                "allowed_sectors": ["comercial", "financeiro", "contabil"]
+            }
+            self.run_test("Update User", "PUT", f"/auth/users/{created_user_id}", 
+                         200, data=update_user_data, user_type="admin")
+
+    def test_user_management_comprehensive(self):
+        """Test comprehensive user management functionality"""
+        print("\n" + "="*50)
+        print("👥 TESTING USER MANAGEMENT COMPREHENSIVE")
+        print("="*50)
+        
+        if 'admin' not in self.tokens:
+            print("❌ No admin token available, skipping user management tests")
+            return
+
+        # Test getting all users and verify the 6 test users exist
+        success, users_response = self.run_test(
+            "Get All Users for Verification", "GET", "/auth/users", 200, user_type="admin"
+        )
+        
+        if success:
+            users = users_response if isinstance(users_response, list) else []
+            print(f"✅ Found {len(users)} users in system")
+            
+            # Verify specific test users exist
+            user_emails = [user.get('email', '') for user in users]
+            expected_emails = [
+                "admin@macedo.com.br",
+                "colaborador@macedo.com.br", 
+                "fiscal@macedo.com.br",
+                "ana.silva@macedo.com.br",
+                "carlos.mendes@macedo.com.br",
+                "admin2@macedo.com.br"
+            ]
+            
+            for email in expected_emails:
+                if email in user_emails:
+                    print(f"✅ Found expected user: {email}")
+                else:
+                    print(f"❌ Missing expected user: {email}")
+            
+            # Check for inactive user (Carlos Mendes)
+            carlos_user = next((u for u in users if u.get('email') == 'carlos.mendes@macedo.com.br'), None)
+            if carlos_user:
+                if not carlos_user.get('is_active', True):
+                    print("✅ Carlos Mendes is correctly marked as inactive")
+                else:
+                    print("❌ Carlos Mendes should be inactive but is marked as active")
+            
+            # Count admin vs colaborador users
+            admin_count = len([u for u in users if u.get('role') == 'admin'])
+            colaborador_count = len([u for u in users if u.get('role') == 'colaborador'])
+            active_count = len([u for u in users if u.get('is_active', True)])
+            
+            print(f"📊 User Statistics:")
+            print(f"   Total users: {len(users)}")
+            print(f"   Admin users: {admin_count}")
+            print(f"   Colaborador users: {colaborador_count}")
+            print(f"   Active users: {active_count}")
+
+    def test_access_control_comprehensive(self):
+        """Test comprehensive access control for configuration module"""
+        print("\n" + "="*50)
+        print("🔒 TESTING ACCESS CONTROL COMPREHENSIVE")
+        print("="*50)
+        
+        # Test admin access to user management
+        if 'admin' in self.tokens:
+            print("\n--- Testing Admin Access ---")
+            self.run_test("Admin Access to Users", "GET", "/auth/users", 200, user_type="admin")
+            self.run_test("Admin Access to Configuracoes", "GET", "/configuracoes/", 200, user_type="admin")
+        
+        # Test colaborador access (should be denied for user management)
+        if 'ana_silva' in self.tokens:
+            print("\n--- Testing Ana Silva (Colaborador) Access Control ---")
+            self.run_test("Ana Silva Denied User Management", "GET", "/auth/users", 403, user_type="ana_silva")
+            
+            # Ana should have access to atendimento and contabil sectors
+            self.run_test("Ana Silva Access to Atendimento", "GET", "/atendimento/", 200, user_type="ana_silva")
+        
+        # Test fiscal user access
+        if 'fiscal' in self.tokens:
+            print("\n--- Testing Fiscal User Access Control ---")
+            self.run_test("Fiscal Denied User Management", "GET", "/auth/users", 403, user_type="fiscal")
+            self.run_test("Fiscal Access to Fiscal Module", "GET", "/fiscal/", 200, user_type="fiscal")
+        
+        # Test inactive user (Carlos) - should fail login
+        print("\n--- Testing Inactive User (Carlos) ---")
+        carlos_login_success, _ = self.run_test(
+            "Carlos Login (Should Fail - Inactive)",
+            "POST",
+            "/auth/login",
+            401,  # Expecting unauthorized due to inactive status
+            data={
+                "email": "carlos.mendes@macedo.com.br",
+                "password": "carlos123"
+            }
+        )
+        
+        if not carlos_login_success:
+            print("✅ Inactive user correctly denied login")
+        else:
+            print("❌ Inactive user should not be able to login")
 
     def test_permissions(self):
         """Test permission system thoroughly"""

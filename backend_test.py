@@ -160,11 +160,11 @@ class MacedoSITester:
             print(f"✅ Found {len(clients)} existing clients")
             
             # Test client filters
-            self.run_test("Filter by City", "GET", "/clients", 200, 
+            self.run_test("Filter by City", "GET", "/clients/", 200, 
                          params={"cidade": "jacobina"}, user_type="admin")
-            self.run_test("Filter by Status", "GET", "/clients", 200, 
+            self.run_test("Filter by Status", "GET", "/clients/", 200, 
                          params={"status": "ativa"}, user_type="admin")
-            self.run_test("Search Clients", "GET", "/clients", 200, 
+            self.run_test("Search Clients", "GET", "/clients/", 200, 
                          params={"search": "Padaria"}, user_type="admin")
 
         # Test creating new client

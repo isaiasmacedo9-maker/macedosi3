@@ -13,7 +13,8 @@ import {
   Menu,
   X,
   Building2,
-  Wallet
+  Wallet,
+  MessageCircle
 } from 'lucide-react';
 
 const Layout = ({ children }) => {

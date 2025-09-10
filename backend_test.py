@@ -544,6 +544,8 @@ def main():
         # Run all test suites
         tester.test_health_check()
         tester.test_authentication()
+        tester.test_user_management_comprehensive()
+        tester.test_access_control_comprehensive()
         tester.test_clients_module()
         tester.test_financial_module()
         tester.test_other_modules()

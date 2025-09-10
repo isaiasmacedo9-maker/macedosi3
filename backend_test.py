@@ -305,27 +305,27 @@ class MacedoSITester:
 
         # Test trabalhista module
         print("\n--- Testing Trabalhista Module ---")
-        self.run_test("Get Trabalhista", "GET", "/trabalhista", 200, user_type="admin")
+        self.run_test("Get Trabalhista", "GET", "/trabalhista/", 200, user_type="admin")
         
         # Test fiscal module  
         print("\n--- Testing Fiscal Module ---")
-        self.run_test("Get Fiscal", "GET", "/fiscal", 200, user_type="admin")
+        self.run_test("Get Fiscal", "GET", "/fiscal/", 200, user_type="admin")
         
         # Test atendimento module
         print("\n--- Testing Atendimento Module ---")
-        self.run_test("Get Atendimento", "GET", "/atendimento", 200, user_type="admin")
+        self.run_test("Get Atendimento", "GET", "/atendimento/", 200, user_type="admin")
         
         # Test chat module
         print("\n--- Testing Chat Module ---")
-        self.run_test("Get Chat", "GET", "/chat", 200, user_type="admin")
+        self.run_test("Get Chat", "GET", "/chat/", 200, user_type="admin")
         
         # Test tasks module
         print("\n--- Testing Tasks Module ---")
-        self.run_test("Get Tasks", "GET", "/tasks", 200, user_type="admin")
+        self.run_test("Get Tasks", "GET", "/tasks/", 200, user_type="admin")
         
         # Test configuracoes module
         print("\n--- Testing Configuracoes Module ---")
-        self.run_test("Get Configuracoes", "GET", "/configuracoes", 200, user_type="admin")
+        self.run_test("Get Configuracoes", "GET", "/configuracoes/", 200, user_type="admin")
 
     def test_permissions(self):
         """Test permission system thoroughly"""
